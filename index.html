@@ -1,0 +1,1245 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de Gestión de Bodega SGB">
+    <title>SGB | Sistema de Gestión de Bodega</title>
+
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f5f7;
+            color: #333;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 15px;
+            background: #7b1e3a;
+            color: white;
+            margin: 4px;
+        }
+
+        button:hover {
+            background: #581329;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 7px 0 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .pantalla {
+            display: none;
+            padding: 25px;
+            min-height: 80vh;
+        }
+
+        .pantalla.activa {
+            display: block;
+        }
+
+        .menu-principal {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px 25px;
+            background: #7b1e3a;
+            color: white;
+        }
+
+        .menu-principal button {
+            background: transparent;
+            color: white;
+        }
+
+        .menu-principal button:hover {
+            background: #581329;
+        }
+
+        .menu-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .contenedor {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .portada {
+            text-align: center;
+            padding: 45px 20px;
+        }
+
+        .portada img {
+            max-width: 220px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .portada h1 {
+            color: #7b1e3a;
+            font-size: 38px;
+        }
+
+        .portada p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .botones {
+            margin-top: 25px;
+        }
+
+        .tarjetas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .card, .tarjeta, .resumen-card {
+            background: white;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .card h3, .tarjeta h3 {
+            color: #7b1e3a;
+        }
+
+        .resumen-card {
+            text-align: center;
+        }
+
+        .resumen-card h3 {
+            color: #7b1e3a;
+            font-size: 28px;
+            margin: 5px;
+        }
+
+        .formulario {
+            background: white;
+            padding: 22px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .tabla-contenedor {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #7b1e3a;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8f0f3;
+        }
+
+        .encabezado-modulo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .encabezado-modulo h1 {
+            color: #7b1e3a;
+        }
+
+        .boton-secundario {
+            background: #555;
+        }
+
+        .boton-peligro {
+            background: #b52b3a;
+        }
+
+        .pie {
+            text-align: center;
+            background: #581329;
+            color: white;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-contenido {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            .menu-principal {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .menu-links {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .menu-links button {
+                text-align: left;
+            }
+
+            .pantalla {
+                padding: 15px;
+            }
+
+            .portada h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================================================= -->
+<!-- MENÚ PÚBLICO -->
+<!-- ================================================= -->
+
+<nav class="menu-principal">
+    <strong>SGB | Gestión de Bodega</strong>
+
+    <div class="menu-links">
+        <button onclick="mostrar('inicio')">Inicio</button>
+        <button onclick="mostrar('sobre')">Sobre nosotros</button>
+        <button onclick="mostrar('productos_publicos')">Productos</button>
+        <button onclick="mostrar('contacto')">Contacto</button>
+        <button onclick="mostrar('login')">Iniciar sesión</button>
+    </div>
+</nav>
+
+<!-- ================================================= -->
+<!-- INICIO -->
+<!-- ================================================= -->
+
+<section id="inicio" class="pantalla activa">
+    <div class="contenedor portada">
+
+        <img src="img/LOGO.png" alt="Logo SGB">
+
+        <h1>Sistema de Gestión de Bodega</h1>
+
+        <p>
+            Una herramienta digital para organizar y administrar
+            los procesos de una bodega.
+        </p>
+
+        <p>
+            Gestioná productos, producción, stock, ventas,
+            recepción de uva y personal desde un solo lugar.
+        </p>
+
+        <div class="botones">
+            <button onclick="mostrar('login')">
+                Ingresar al sistema
+            </button>
+
+            <button class="boton-secundario" onclick="mostrar('sobre')">
+                Conocer el proyecto
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- SOBRE NOSOTROS -->
+<!-- ================================================= -->
+
+<section id="sobre" class="pantalla">
+    <div class="contenedor">
+
+        <h1>Sobre el proyecto</h1>
+
+        <div class="card">
+            <h2>Sistema de Gestión de Bodega (SGB)</h2>
+
+            <p>
+                El Sistema de Gestión de Bodega es un proyecto
+                desarrollado para facilitar la organización y
+                administración de las actividades de una bodega.
+            </p>
+
+            <p>
+                Permite registrar y consultar información relacionada
+                con productos, lotes, producción, inventario,
+                ventas, viñedos, recepción de uva y empleados.
+            </p>
+
+            <p>
+                Su objetivo es centralizar la información y facilitar
+                el seguimiento de las diferentes actividades.
+            </p>
+        </div>
+
+        <button onclick="mostrar('inicio')">Volver al inicio</button>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- PRODUCTOS PÚBLICOS -->
+<!-- ================================================= -->
+
+<section id="productos_publicos" class="pantalla">
+    <div class="contenedor">
+
+        <h1>Nuestros productos</h1>
+
+        <div class="card">
+            <p>
+                En esta sección se presenta información general
+                sobre los productos de la bodega.
+            </p>
+
+            <p>
+                Para consultar y administrar el inventario,
+                ingresá al sistema de gestión.
+            </p>
+
+            <button onclick="mostrar('login')">
+                Acceder al sistema
+            </button>
+        </div>
+
+        <button class="boton-secundario" onclick="mostrar('inicio')">
+            Volver al inicio
+        </button>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- CONTACTO -->
+<!-- ================================================= -->
+
+<section id="contacto" class="pantalla">
+    <div class="contenedor">
+
+        <h1>Contacto</h1>
+
+        <div class="card">
+            <h3>Sistema de Gestión de Bodega</h3>
+
+            <p>
+                Para consultas sobre el proyecto o el funcionamiento
+                del sistema, podés comunicarte con el responsable
+                de la bodega.
+            </p>
+
+            <p>
+                <strong>Proyecto:</strong> SGB
+            </p>
+
+            <p>
+                <strong>Área:</strong> Gestión y administración de bodega
+            </p>
+        </div>
+
+        <button onclick="mostrar('inicio')">Volver al inicio</button>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- INICIO DE SESIÓN -->
+<!-- ================================================= -->
+
+<section id="login" class="pantalla">
+    <div class="contenedor" style="max-width:450px;">
+
+        <div class="formulario">
+
+            <h1>Iniciar sesión</h1>
+
+            <p>Ingresá tus datos para acceder al sistema.</p>
+
+            <form onsubmit="event.preventDefault(); login();">
+
+                <label for="user">Usuario</label>
+                <input
+                    type="text"
+                    id="user"
+                    placeholder="Ingrese su usuario"
+                    autocomplete="username"
+                >
+
+                <label for="pass">Contraseña</label>
+                <input
+                    type="password"
+                    id="pass"
+                    placeholder="Ingrese su contraseña"
+                    autocomplete="current-password"
+                >
+
+                <button type="submit" style="width:100%;">
+                    Ingresar
+                </button>
+
+            </form>
+
+            <button class="boton-secundario"
+                onclick="mostrar('inicio')">
+                Volver al inicio
+            </button>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- PANEL PRINCIPAL -->
+<!-- ================================================= -->
+
+<section id="panel" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <div>
+                <h1>Panel principal</h1>
+                <p>Bienvenido al Sistema de Gestión de Bodega.</p>
+            </div>
+
+            <button class="boton-peligro" onclick="abrirModal()">
+                Cerrar sesión
+            </button>
+        </div>
+
+        <div class="tarjetas">
+
+            <div class="card">
+                <h3>Productos</h3>
+                <p>Administración de productos.</p>
+                <button onclick="mostrar('productos')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Lotes</h3>
+                <p>Registro y seguimiento de lotes.</p>
+                <button onclick="mostrar('lotes')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Producción</h3>
+                <p>Control de procesos productivos.</p>
+                <button onclick="mostrar('produccion')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Stock</h3>
+                <p>Control de existencias.</p>
+                <button onclick="mostrar('stock')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Ventas</h3>
+                <p>Registro y seguimiento de ventas.</p>
+                <button onclick="mostrar('ventas')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Tareas</h3>
+                <p>Organización de actividades.</p>
+                <button onclick="mostrar('tareas')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Viñedos</h3>
+                <p>Administración de viñedos.</p>
+                <button onclick="mostrar('vinedos')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Recepción de uva</h3>
+                <p>Registro de materia prima recibida.</p>
+                <button onclick="mostrar('recepcion')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Empleados</h3>
+                <p>Administración del personal.</p>
+                <button onclick="mostrar('empleados')">Ingresar</button>
+            </div>
+
+            <div class="card">
+                <h3>Reportes</h3>
+                <p>Consulta de información general.</p>
+                <button onclick="mostrar('reportes')">Ingresar</button>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- PRODUCTOS -->
+<!-- ================================================= -->
+
+<section id="productos" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Gestión de productos</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalProductos">0</h3>
+                <p>Total de productos</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="productosDisponibles">0</h3>
+                <p>Productos disponibles</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="productosSinStock">0</h3>
+                <p>Productos sin stock</p>
+            </div>
+        </div>
+
+        <button onclick="mostrarFormularioProducto()">
+            Registrar producto
+        </button>
+
+        <div id="formulario-producto" class="formulario" style="display:none;">
+
+            <h2>Datos del producto</h2>
+
+            <label>Nombre</label>
+            <input type="text" id="nombreProducto">
+
+            <label>Tipo</label>
+            <input type="text" id="tipoProducto">
+
+            <label>Año</label>
+            <input type="number" id="anioProducto">
+
+            <label>Stock inicial</label>
+            <input type="number" id="stockProducto" min="0">
+
+            <button onclick="guardarProducto()">Guardar</button>
+            <button class="boton-secundario" onclick="ocultarFormularioProducto()">Cancelar</button>
+
+        </div>
+
+        <h2>Listado de productos</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Año</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-productos"></tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- LOTES -->
+<!-- ================================================= -->
+
+<section id="lotes" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Gestión de lotes</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <button onclick="mostrarFormularioLote()">Registrar lote</button>
+
+        <div id="formulario-lote" class="formulario" style="display:none;">
+
+            <h2>Datos del lote</h2>
+
+            <label>Número de lote</label>
+            <input type="text" id="numeroLote">
+
+            <label>Fecha</label>
+            <input type="date" id="fechaLote">
+
+            <label>Estado</label>
+            <select id="estadoLote">
+                <option value="">Seleccione un estado</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Pendiente">Pendiente</option>
+            </select>
+
+            <button onclick="guardarLote()">Guardar</button>
+            <button class="boton-secundario" onclick="ocultarFormularioLote()">Cancelar</button>
+
+        </div>
+
+        <h2>Lotes registrados</h2>
+        <div id="lista-lotes"></div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- PRODUCCIÓN -->
+<!-- ================================================= -->
+
+<section id="produccion" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Gestión de producción</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalProducciones">0</h3>
+                <p>Producciones registradas</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="produccionesActivas">0</h3>
+                <p>En proceso</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="produccionesFinalizadas">0</h3>
+                <p>Finalizadas</p>
+            </div>
+        </div>
+
+        <button onclick="mostrarFormularioProduccion()">Registrar producción</button>
+
+        <div id="formulario-produccion" class="formulario" style="display:none;">
+
+            <h2>Datos de producción</h2>
+
+            <label>Producto</label>
+            <input type="text" id="productoProduccion">
+
+            <label>Cantidad</label>
+            <input type="number" id="cantidadProduccion" min="0.01" step="any">
+
+            <label>Fecha</label>
+            <input type="date" id="fechaProduccion">
+
+            <label>Estado</label>
+            <select id="estadoProduccion">
+                <option value="">Seleccione un estado</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Pendiente">Pendiente</option>
+            </select>
+
+            <button onclick="guardarProduccion()">Guardar</button>
+            <button class="boton-secundario" onclick="ocultarFormularioProduccion()">Cancelar</button>
+
+        </div>
+
+        <h2>Producciones registradas</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-produccion"></tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- STOCK -->
+<!-- ================================================= -->
+
+<section id="stock" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Control de stock</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalStock">0</h3>
+                <p>Productos registrados</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="stockDisponible">0</h3>
+                <p>Unidades disponibles</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="stockBajo">0</h3>
+                <p>Productos sin stock</p>
+            </div>
+        </div>
+
+        <h2>Inventario</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Tipo</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-stock"></tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- VENTAS -->
+<!-- ================================================= -->
+
+<section id="ventas" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Gestión de ventas</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalVentas">0</h3>
+                <p>Ventas registradas</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="dineroVentas">$0</h3>
+                <p>Importe total</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="productosVendidos">0</h3>
+                <p>Unidades vendidas</p>
+            </div>
+        </div>
+
+        <button onclick="mostrarFormularioVenta()">Registrar venta</button>
+
+        <div id="formulario-venta" class="formulario" style="display:none;">
+
+            <h2>Datos de la venta</h2>
+
+            <label>Cliente</label>
+            <input type="text" id="clienteVenta">
+
+            <label>Producto</label>
+            <select id="productoVenta">
+                <option value="">Seleccione un producto</option>
+            </select>
+
+            <label>Cantidad</label>
+            <input type="number" id="cantidadVenta" min="1">
+
+            <label>Precio por unidad</label>
+            <input type="number" id="precioVenta" min="0.01" step="any">
+
+            <button onclick="guardarVenta()">Guardar venta</button>
+            <button class="boton-secundario" onclick="ocultarFormularioVenta()">Cancelar</button>
+
+        </div>
+
+        <h2>Ventas registradas</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-ventas"></tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- TAREAS -->
+<!-- ================================================= -->
+
+<section id="tareas" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Gestión de tareas</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalTareas">0</h3>
+                <p>Total de tareas</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="tareasPendientes">0</h3>
+                <p>Pendientes</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="tareasCompletadas">0</h3>
+                <p>Completadas</p>
+            </div>
+        </div>
+
+        <button onclick="mostrarFormularioTarea()">Registrar tarea</button>
+
+        <div id="formulario-tarea" class="formulario" style="display:none;">
+
+            <h2>Datos de la tarea</h2>
+
+            <label>Descripción</label>
+            <textarea id="descripcionTarea" rows="3"></textarea>
+
+            <label>Responsable</label>
+            <input type="text" id="responsableTarea">
+
+            <label>Fecha</label>
+            <input type="date" id="fechaTarea">
+
+            <label>Estado</label>
+            <select id="estadoTarea">
+                <option value="">Seleccione un estado</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Completada">Completada</option>
+            </select>
+
+            <button onclick="guardarTarea()">Guardar tarea</button>
+            <button class="boton-secundario" onclick="ocultarFormularioTarea()">Cancelar</button>
+
+        </div>
+
+        <h2>Listado de tareas</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Responsable</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-tareas"></tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- VIÑEDOS -->
+<!-- ================================================= -->
+
+<section id="vinedos" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Gestión de viñedos</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalVinedos">0</h3>
+                <p>Viñedos registrados</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="vinedosActivos">0</h3>
+                <p>Viñedos activos</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="superficieTotal">0</h3>
+                <p>Superficie total</p>
+            </div>
+        </div>
+
+        <button onclick="mostrarFormularioVinedo()">Registrar viñedo</button>
+
+        <div id="formulario-vinedo" class="formulario" style="display:none;">
+
+            <h2>Datos del viñedo</h2>
+
+            <label>Nombre</label>
+            <input type="text" id="nombreVinedo">
+
+            <label>Variedad</label>
+            <input type="text" id="variedadVinedo">
+
+            <label>Superficie</label>
+            <input type="number" id="superficieVinedo" min="0.01" step="any">
+
+            <label>Estado</label>
+            <select id="estadoVinedo">
+                <option value="">Seleccione un estado</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+
+            <label>Rendimiento</label>
+            <input type="number" id="rendimientoVinedo" min="0" step="any">
+
+            <button onclick="guardarVinedo()">Guardar viñedo</button>
+            <button class="boton-secundario" onclick="ocultarFormularioVinedo()">Cancelar</button>
+
+        </div>
+
+        <h2>Viñedos registrados</h2>
+        <div id="lista-vinedos"></div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- RECEPCIÓN DE UVA -->
+<!-- ================================================= -->
+
+<section id="recepcion" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Recepción de uva</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalUva">0</h3>
+                <p>Cantidad total recibida</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="totalRecepciones">0</h3>
+                <p>Recepciones registradas</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="proveedoresActivos">0</h3>
+                <p>Proveedores registrados</p>
+            </div>
+        </div>
+
+        <button onclick="mostrarFormularioRecepcion()">Registrar recepción</button>
+
+        <div id="formulario-recepcion" class="formulario" style="display:none;">
+
+            <h2>Datos de recepción</h2>
+
+            <label>Proveedor</label>
+            <input type="text" id="proveedorUva">
+
+            <label>Variedad de uva</label>
+            <input type="text" id="variedadUva">
+
+            <label>Cantidad recibida (kg)</label>
+            <input type="number" id="cantidadUva" min="0.01" step="any">
+
+            <label>Fecha</label>
+            <input type="date" id="fechaUva">
+
+            <label>Observaciones</label>
+            <textarea id="observacionesUva" rows="3"></textarea>
+
+            <button onclick="guardarRecepcion()">Guardar recepción</button>
+            <button class="boton-secundario" onclick="ocultarFormularioRecepcion()">Cancelar</button>
+
+        </div>
+
+        <h2>Recepciones registradas</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proveedor</th>
+                        <th>Variedad</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                        <th>Observaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-recepcion"></tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- EMPLEADOS -->
+<!-- ================================================= -->
+
+<section id="empleados" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Gestión de empleados</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+            <div class="resumen-card">
+                <h3 id="totalEmpleados">0</h3>
+                <p>Empleados registrados</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="asistenciasHoy">0</h3>
+                <p>Asistencias de hoy</p>
+            </div>
+        </div>
+
+        <button onclick="mostrarFormularioEmpleado()">Registrar empleado</button>
+
+        <div id="formulario-empleado" class="formulario" style="display:none;">
+
+            <h2>Datos del empleado</h2>
+
+            <label>Nombre y apellido</label>
+            <input type="text" id="nombreEmpleado">
+
+            <label>Puesto</label>
+            <input type="text" id="puestoEmpleado">
+
+            <label>Teléfono</label>
+            <input type="tel" id="telefonoEmpleado">
+
+            <label>Correo electrónico</label>
+            <input type="email" id="correoEmpleado">
+
+            <button onclick="guardarEmpleado()">Guardar empleado</button>
+            <button class="boton-secundario" onclick="ocultarFormularioEmpleado()">Cancelar</button>
+
+        </div>
+
+        <h2>Personal registrado</h2>
+
+        <input
+            type="search"
+            id="buscarEmpleado"
+            placeholder="Buscar empleado..."
+            oninput="mostrarEmpleados()"
+        >
+
+        <div id="lista-empleados"></div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- REPORTES -->
+<!-- ================================================= -->
+
+<section id="reportes" class="pantalla">
+    <div class="contenedor">
+
+        <div class="encabezado-modulo">
+            <h1>Reportes generales</h1>
+            <button class="boton-secundario" onclick="volver()">Volver al panel</button>
+        </div>
+
+        <div class="tarjetas">
+
+            <div class="resumen-card">
+                <h3 id="reporteProductos">0</h3>
+                <p>Productos registrados</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="reporteStock">0</h3>
+                <p>Unidades en stock</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="reporteProduccion">0</h3>
+                <p>Cantidad producida</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="reporteVentas">$0</h3>
+                <p>Total de ventas</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="reporteUvas">0</h3>
+                <p>Kg de uva recibidos</p>
+            </div>
+
+            <div class="resumen-card">
+                <h3 id="reporteTareas">0</h3>
+                <p>Tareas completadas</p>
+            </div>
+
+        </div>
+
+        <h2>Resumen de producción por producto</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad producida</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-reporte-produccion"></tbody>
+            </table>
+        </div>
+
+        <div style="margin-top:20px;">
+            <button onclick="generarReportePDF()">
+                Descargar reporte PDF
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================================================= -->
+<!-- MODAL CERRAR SESIÓN -->
+<!-- ================================================= -->
+
+<div id="modal">
+    <div class="modal-contenido">
+
+        <h2>Cerrar sesión</h2>
+
+        <p>¿Está seguro de que desea salir del sistema?</p>
+
+        <button class="boton-peligro" onclick="cerrarSesion()">
+            Sí, cerrar sesión
+        </button>
+
+        <button class="boton-secundario" onclick="cerrarModal()">
+            Cancelar
+        </button>
+
+    </div>
+</div>
+
+<!-- ================================================= -->
+<!-- PIE DE PÁGINA -->
+<!-- ================================================= -->
+
+<footer class="pie">
+    <p>SGB - Sistema de Gestión de Bodega</p>
+    <p>Proyecto de Práctica Profesionalizante II - 2026</p>
+</footer>
+
+<!-- LIBRERÍA PARA GENERAR PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- JAVASCRIPT DEL SISTEMA -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
+```
