@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SGB</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+
+
+<body>
+<div id="inicio" class="pantalla activa">
+
+  <div style="text-align:center; padding:40px;">
+
+    <h1>Página principal</h1>
+
+    <h2>Sistema de Gestión de Bodega</h2>
+
+    <p style="max-width:600px; margin:auto;">
+      Bienvenido al sistema de gestión de bodegas.<br><br>
+      Esta plataforma permite administrar productos, lotes de producción,
+      stock, ventas y tareas diarias de la bodega.
+    </p>
+
+    <br>
+
+    <button onclick="mostrar('login')">Iniciar sesión</button>
+
+  </div>
+
+</div>
+
+<div id="login" class="pantalla">
+  <h2>Login</h2>
+  <input id="user" placeholder="Usuario">
+  <input id="pass" placeholder="Contraseña">
+  <button onclick="login()">Entrar</button>
+</div>
+
+
+<div id="panel" class="pantalla">
+
+<header>
+  <h2>SGB - Panel del Sistema</h2>
+  <button onclick="abrirModal()">Cerrar sesión</button>
+</header>
+
+<div class="grid">
+
+<div class="card" onclick="mostrar('productos')">🍇 Gestión de Productos</div>
+<div class="card" onclick="mostrar('lotes')">🛢️ Lotes de Producción</div>
+<div class="card" onclick="mostrar('produccion')">🍷 Producción</div>
+<div class="card" onclick="mostrar('stock')">📦 Stock</div>
+<div class="card" onclick="mostrar('ventas')">💰 Ventas</div>
+<div class="card" onclick="mostrar('tareas')">📅 Tareas Diarias</div>
+<div class="card" onclick="mostrar('vinedos')">🌿 Viñedos</div>
+<div class="card" onclick="mostrar('recepcion')">🚚 Recepción de Uvas</div>
+<div class="card" onclick="mostrar('empleados')">👷 Empleados</div>
+<div class="card" onclick="mostrar('reportes')">📈 Reportes</div>
+
+</div>
+
+</div>
+
+
+<div id="productos" class="pantalla"><h2>Productos</h2><button onclick="volver()">Volver</button></div>
+<div id="lotes" class="pantalla"><h2>Lotes</h2><button onclick="volver()">Volver</button></div>
+<div id="produccion" class="pantalla"><h2>Producción</h2><button onclick="volver()">Volver</button></div>
+<div id="stock" class="pantalla"><h2>Stock</h2><button onclick="volver()">Volver</button></div>
+<div id="ventas" class="pantalla"><h2>Ventas</h2><button onclick="volver()">Volver</button></div>
+<div id="tareas" class="pantalla"><h2>Tareas Diarias</h2><button onclick="volver()">Volver</button></div>
+<div id="vinedos" class="pantalla"><h2>Viñedos</h2><button onclick="volver()">Volver</button></div>
+<div id="recepcion" class="pantalla"><h2>Recepción de Uvas</h2><button onclick="volver()">Volver</button></div>
+<div id="empleados" class="pantalla"><h2>Empleados</h2><button onclick="volver()">Volver</button></div>
+<div id="reportes" class="pantalla"><h2>Reportes</h2><button onclick="volver()">Volver</button></div>
+
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <h3>¿Desea cerrar sesión?</h3>
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+    <button onclick="cerrarModal()">Cancelar</button>
+  </div>
+</div>
+<script src="js/app.js"></script>
+</body>
+</html>
