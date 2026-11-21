@@ -1,5 +1,5 @@
-
 import os
+from dotenv import load_dotenv
 
 from telegram import Update
 from telegram.ext import (
@@ -12,6 +12,7 @@ from telegram.ext import (
 
 from responses import responder
 
+load_dotenv()
 
 async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["modulo_actual"] = None
@@ -45,7 +46,7 @@ async def recibir_mensaje(
 
 
 def main():
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    token = os.getenv("TELEGRAM_TOKEN") 
 
     if not token:
         print("ERROR: No se encontró el token de Telegram.")
